@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_bloc_http/blocs/settings_bloc.dart';
 import 'package:weather_bloc_http/blocs/simple_bloc_delegate.dart';
 import 'package:weather_bloc_http/repositories/repositories.dart';
 import 'package:http/http.dart' as http;
@@ -14,8 +15,15 @@ void main() {
   );
 
   BlocSupervisor.delegate = SimpleBlocDelegate();
-  runApp(BlocProvider<ThemeBloc>(
-    create: (contex) => ThemeBloc(),
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<ThemeBloc>(
+        create: (contex) => ThemeBloc(),
+      ),
+      BlocProvider<SettingsBloc>(
+        create: (contex) => SettingsBloc(),
+      )
+    ],
     child: App(weatherRepository: weatherRepository),
   ));
 }
