@@ -7,15 +7,17 @@ import 'package:weather_bloc_http/blocs/blocs.dart';
 import 'package:weather_bloc_http/widgets/widgets.dart';
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
-
   final WeatherRepository weatherRepository = WeatherRepository(
       weatherApiClient: WeatherApiClient(
           httpClient: http.Client()
       ),
   );
 
-  runApp(App(weatherRepository: weatherRepository));
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+  runApp(BlocProvider<ThemeBloc>(
+    create: (contex) => ThemeBloc(),
+    child: App(weatherRepository: weatherRepository),
+  ));
 }
 
 class App extends StatelessWidget {
@@ -27,13 +29,17 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Weather',
-      home: BlocProvider(
-        create: (context) =>
-            WeatherBloc(weatherRepository: weatherRepository),
-        child: Weather(),
-      ),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          return MaterialApp(
+            title: 'Flutter Weather',
+            home: BlocProvider(
+              create: (context) =>
+                  WeatherBloc(weatherRepository: weatherRepository),
+              child: Weather(),
+            ),
+          );
+        },
     );
   }
 }
